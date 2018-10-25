@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "639304407003",
+    "firebase_url": "https://ocrtest-6863b.firebaseio.com",
+    "project_id": "ocrtest-6863b",
+    "storage_bucket": "ocrtest-6863b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639304407003:android:b57d88a75245589a",
+        "android_client_info": {
+          "package_name": "bachelor.sebas.ocrtest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "639304407003-ku4s9f1us2b1vp894vviqi0f4o56vqp9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "bachelor.sebas.ocrtest",
+            "certificate_hash": "96b6b318f44937fe8fb1e6b87ca1116f0d980144"
+          }
+        },
+        {
+          "client_id": "639304407003-l2otosji6eq8aatd3lrdp41165i687ec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQgSnuP_5140GSf0lCEvkoueXLnfyGDVw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "639304407003-l2otosji6eq8aatd3lrdp41165i687ec.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
