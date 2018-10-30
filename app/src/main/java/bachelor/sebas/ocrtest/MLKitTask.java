@@ -18,6 +18,7 @@ public class MLKitTask extends AsyncTask<Bitmap, Void, Void> {
     private MainActivity mainActivity;
     private FirebaseVisionTextRecognizer textRecognizer;
     private long[] time;
+    private boolean start;
 
     MLKitTask(MainActivity mainActivity, FirebaseVisionTextRecognizer textRecognizer,
               ArrayList<ListEntry> list) {
@@ -29,34 +30,38 @@ public class MLKitTask extends AsyncTask<Bitmap, Void, Void> {
 
     @Override
     protected Void doInBackground(Bitmap... bitmaps) {
-        for (int i = 0; i < bitmaps.length; i++){
-            time[i] = System.currentTimeMillis();
-            final FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmaps[i]);
-            final int finalI = i;
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    textRecognizer.processImage(image)
-                            .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-                                @Override
-                                public void onSuccess(FirebaseVisionText result) {
-                                    String text = result.getText();
-                                    list.get(finalI).setMlKit(text);
-                                    long duration = System.currentTimeMillis() - time[finalI];
-                                    list.get(finalI).setDurMLKit(duration);
-                                    MainActivity.writeToSDFile(list.get(finalI), 0);
-                                    publishProgress();
-                                }
-                            })
-                            .addOnFailureListener(
-                                    new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            // failed
-                                        }
-                                    });
-                }
-            };
-            new Thread(runnable).start();
+        int i = 0;
+        start = true;
+        while (i < bitmaps.length) {
+            if (start) {
+                time[i] = System.currentTimeMillis();
+                Bitmap current = bitmaps[i];
+                final int finalI = i;
+                i++;
+                start = false;
+                final FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(current);
+                textRecognizer.processImage(image)
+                        .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                            @Override
+                            public void onSuccess(FirebaseVisionText result) {
+                                String text = result.getText();
+                                list.get(finalI).setMlKit(text);
+                                long duration = System.currentTimeMillis() - time[finalI];
+                                list.get(finalI).setDurMLKit(duration);
+                                MainActivity.writeToSDFile(list.get(finalI), 0);
+                                publishProgress();
+                                start = true;
+                            }
+                        })
+                        .addOnFailureListener(
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // failed
+                                        start = true;
+                                    }
+                                });
+            }
         }
         return null;
     }

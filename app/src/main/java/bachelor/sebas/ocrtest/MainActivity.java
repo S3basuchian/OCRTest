@@ -194,8 +194,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void workOverList() {
-        new MLKitTask(this, textRecognizer, list).execute(imageList.toArray(new Bitmap[imageList.size()]));
         new MLKitCloudTask(this, cloudTextRecognizer, list).execute(imageList.toArray(new Bitmap[imageList.size()]));
+        new MLKitTask(this, textRecognizer, list).execute(imageList.toArray(new Bitmap[imageList.size()]));
         new TessTask(this, mTess, list).execute(imageList.toArray(new Bitmap[imageList.size()]));
     }
 

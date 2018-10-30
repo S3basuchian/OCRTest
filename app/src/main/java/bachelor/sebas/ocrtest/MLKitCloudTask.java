@@ -18,6 +18,7 @@ public class MLKitCloudTask extends AsyncTask<Bitmap, Void, Void> {
     private MainActivity mainActivity;
     private FirebaseVisionDocumentTextRecognizer cloudTextRecognizer;
     private long[] time;
+    private boolean start;
 
     MLKitCloudTask(MainActivity mainActivity,
                    FirebaseVisionDocumentTextRecognizer cloudTextRecognizer,
@@ -30,34 +31,38 @@ public class MLKitCloudTask extends AsyncTask<Bitmap, Void, Void> {
 
     @Override
     protected Void doInBackground(Bitmap... bitmaps) {
-        for (int i = 0; i < bitmaps.length; i++){
-            time[i] = System.currentTimeMillis();
-            final FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmaps[i]);
-            final int finalI = i;
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    cloudTextRecognizer.processImage(image)
-                            .addOnSuccessListener(new OnSuccessListener<FirebaseVisionDocumentText>() {
-                                @Override
-                                public void onSuccess(FirebaseVisionDocumentText result) {
-                                    String text = result.getText();
-                                    list.get(finalI).setMlKitCloud(text);
-                                    long duration = System.currentTimeMillis() - time[finalI];
-                                    list.get(finalI).setDurMLKitCloud(duration);
-                                    MainActivity.writeToSDFile(list.get(finalI), 2);
-                                    publishProgress();
-                                }
-                            })
-                            .addOnFailureListener(
-                                    new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            // failed
-                                        }
-                                    });
-                }
-            };
-            new Thread(runnable).start();
+        int i = 0;
+        start = true;
+        while (i < bitmaps.length) {
+            if (start) {
+                time[i] = System.currentTimeMillis();
+                Bitmap current = bitmaps[i];
+                final int finalI = i;
+                i++;
+                start = false;
+                final FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(current);
+                cloudTextRecognizer.processImage(image)
+                        .addOnSuccessListener(new OnSuccessListener<FirebaseVisionDocumentText>() {
+                            @Override
+                            public void onSuccess(FirebaseVisionDocumentText result) {
+                                String text = result.getText();
+                                list.get(finalI).setMlKitCloud(text);
+                                long duration = System.currentTimeMillis() - time[finalI];
+                                list.get(finalI).setDurMLKitCloud(duration);
+                                MainActivity.writeToSDFile(list.get(finalI), 2);
+                                publishProgress();
+                                start = true;
+                            }
+                        })
+                        .addOnFailureListener(
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // failed
+                                        start = true;
+                                    }
+                                });
+            }
         }
         return null;
     }
